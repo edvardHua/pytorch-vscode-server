@@ -11,17 +11,28 @@ Docker images for machine learning development environments using CUDA and PyTor
 - SSH Server
 - \+ Other tools (e.g. git, wget, curl, unzip, etc.)
 - \+ Python packages (e.g. numpy, pandas, matplotlib, tensorboard, etc.)
+- ffmpeg + libx264 + others (by edvard, Dockerfile_edz)
 
 ## Usage
 
+UPDATE: 2024-10-11
+ffmpeg + libx264 + others (by edvard, Dockerfile_edz)
+
+
 ```bash
+# modify based on you device
 docker run -d \
-  -p 5443:443 \
-  -p 5022:22 \
-  --gpus '"device=0"' \
-  -e PASSWORD="your_vscode_password" \
+  -p 8078:443 \
+  -p 8079:22 \
+  -p 8088:8088 \
+  -p 8089:8089 \
+  --runtime nvidia \
+  -e PASSWORD="hello_world" \
+  --shm-size 64g \
+  -v /data/zengzihua:/workspace \
+  -v /mnt/cephfs2:/mnt/cephfs2 \
   --name pytorch-vscode-server \
-  ghcr.io/soju06/pytorch-vscode-server:1.0.2-pytorch2.2.2-cuda12.1
+  harbor.bigo.sg/bigo_ai/zengzihua/code_server:torch2-cuda121-patch
 ```
 
 - Access VSCode Server: `https://localhost:5443`

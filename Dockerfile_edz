@@ -1,0 +1,18 @@
+FROM harbor.bigo.sg/bigo_ai/zengzihua/code_server:torch2-cuda121
+
+RUN sudo apt update \
+    && sudo apt install -y nasm \
+    && git clone https://code.videolan.org/videolan/x264.git \
+    && cd x264 && mkdir build && cd build \
+    && ./../configure --prefix=/usr/local/ --enable-shared && make && sudo make install \
+    && wget https://ffmpeg.org/releases/ffmpeg-4.3.1.tar.bz2 && tar -xif ffmpeg-4.3.1.tar.bz2 && cd ffmpeg-4.3.1 \
+    && sudo mkdir /home/ffmpeg && sudo chmod 777 /home/ffmpeg && ./configure --enable-shared --enable-swscale --enable-gpl --enable-nonfree --enable-pic --prefix=/home/ffmpeg --enable-version3 --enable-postproc --enable-pthreads --enable-static --enable-libx264 \
+    && make install && sudo make install
+
+ENV ffmpeg_home=/home/ffmpeg
+ENV PATH=${ffmpeg_home}/bin:$PATH
+ENV LD_LIBRARY_PATH=${ffmpeg_home}/lib:$LD_LIBRARY_PATH
+
+COPY requirements_edz.txt /home/ubuntu
+RUN pip install -r /home/ubuntu/requirements_edz.txt
+RUN sudo apt update && sudo apt install -y zip
